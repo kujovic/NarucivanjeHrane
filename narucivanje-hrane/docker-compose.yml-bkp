@@ -1,0 +1,24 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:latest
+    ports:
+      - 3306:3306
+    volumes:
+      - "./narucivanjehrane.sql:/docker-entrypoint-initdb.d/narucivanjehrane.sql"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: narucivanjehrane
+    cap_add:
+     - SYS_NICE
+  app:
+    image: openjdk:11
+    depends_on:
+      - mysql
+    container_name: "app"
+    restart: always
+    ports:
+      - 8080:8080
+    volumes:
+      - "/root/git/NarucivanjeHrane/narucivanje-hrane/target/spring-boot-docker.jar:/narucivanje-hrane.jar"
+    command: ['java', '-jar', '/narucivanje-hrane.jar']
